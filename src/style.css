@@ -1,0 +1,53 @@
+html, body, #root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #02040a;
+}
+
+.snipex-shell {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #02040a;
+  position: relative;
+}
+
+.snipex-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #02040a;
+}
+
+.snipex-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 30% 20%, rgba(245, 200, 66, .10), transparent 32%), #02040a;
+}
+
+.snipex-loader-card {
+  border: 1px solid rgba(245, 200, 66, .24);
+  background: rgba(5, 10, 20, .92);
+  border-radius: 18px;
+  padding: 20px 24px;
+  min-width: 240px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.snipex-loader-title {
+  color: #f5c842;
+  font: 800 18px system-ui, sans-serif;
+  letter-spacing: 2px;
+}
+
+.snipex-loader-sub {
+  color: rgba(255,255,255,.68);
+  margin-top: 8px;
+  font: 12px system-ui, sans-serif;
+}
