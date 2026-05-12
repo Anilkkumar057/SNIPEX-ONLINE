@@ -1,13 +1,192 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>snipex-bot-online</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipeX Light Live Terminal</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#02040a;color:#eef7ff;font-family:Inter,system-ui,Segoe UI,sans-serif}
+    body{background:radial-gradient(circle at 15% 0%,rgba(245,200,66,.11),transparent 31%),linear-gradient(180deg,#06101d,#02040a)}
+    .app{min-height:100vh;padding:18px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.035)}
+    .brand{display:flex;gap:12px;align-items:center}.bolt{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:rgba(245,200,66,.16);border:1px solid rgba(245,200,66,.35)}
+    h1{margin:0;font-size:17px;letter-spacing:1.6px;color:#f5c842}p{margin:3px 0 0;color:rgba(238,247,255,.62);font-size:12px}
+    .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.pill,.tag{padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);font-style:normal}
+    .good{color:#00e676!important}.bad{color:#ff4667!important}.warn{color:#f5c842!important}.cyan{color:#00e5ff!important}
+    .modebar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin:14px 0}.modebar input{width:100%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;border-radius:12px;padding:10px}
+    button{border:1px solid rgba(245,200,66,.25);background:rgba(245,200,66,.1);color:#f5c842;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800}button.on{border-color:rgba(0,230,118,.35);color:#00e676;background:rgba(0,230,118,.08)}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.stats>div,.card,.panel{border:1px solid rgba(255,255,255,.08);background:rgba(5,13,26,.78);border-radius:16px;padding:14px;box-shadow:0 16px 35px rgba(0,0,0,.18)}
+    .stats span,.prices span,.decision span,.confidence span,.panel span{display:block;color:rgba(238,247,255,.52);font-size:10px;text-transform:uppercase;letter-spacing:1px}.stats b{display:block;margin-top:6px;color:#f5c842;overflow:hidden;text-overflow:ellipsis}
+    .notice{margin:0 0 14px;padding:12px 14px;border-radius:14px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.22);color:rgba(255,255,255,.82)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.head{display:flex;justify-content:space-between;gap:10px;align-items:start}.head h2{margin:0;color:#f5c842;font-size:16px}
+    .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.prices div{padding:10px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.prices b,.decision b{display:block;margin-top:4px;font-size:14px}
+    .confidence>div{display:flex;justify-content:space-between;margin-bottom:7px}.confidence b{color:#00e5ff}.confidence i{display:block;height:9px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08)}.confidence u{display:block;height:100%;background:linear-gradient(90deg,#00e676,#f5c842);border-radius:inherit}
+    .decision{margin-top:12px;display:flex;justify-content:space-between;align-items:center}.smallerr{display:block;margin-top:10px;padding:8px;border-radius:10px;background:rgba(255,70,103,.07);color:#ff8aa0;font-size:12px}
+    .bottom{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:14px}.list{display:grid;gap:7px}.list div{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);padding:6px 0;color:rgba(255,255,255,.78)}
+    footer{margin-top:18px;color:rgba(238,247,255,.46);font-size:12px;text-align:center}
+    @media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}.stats,.bottom{grid-template-columns:repeat(2,1fr)}.modebar{grid-template-columns:1fr}}
+    @media(max-width:700px){.top{flex-direction:column;align-items:stretch}.grid,.stats,.bottom{grid-template-columns:1fr}.app{padding:10px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div class="brand">
+        <div class="bolt">⚡</div>
+        <div>
+          <h1>SNIPEX LIGHT LIVE TERMINAL</h1>
+          <p>PC bridge + online backend mode · fast dashboard · real API data</p>
+        </div>
+      </div>
+      <div class="pills">
+        <span id="mt5-pill" class="pill bad">MT5 OFF</span>
+        <span id="mode-pill" class="pill">MODE: PC</span>
+        <span id="updated-pill" class="pill">Updated: --</span>
+      </div>
+    </header>
+
+    <section class="modebar">
+      <input id="apiBase" placeholder="API Base URL e.g. http://localhost:5000 or https://your-backend.com" />
+      <button onclick="setPcMode()">PC Mode</button>
+      <button onclick="setOnlineMode()">Online Mode</button>
+      <button onclick="refreshAll()">Refresh</button>
+      <button id="autoBtn" class="on" onclick="toggleAuto()">Auto ON</button>
+    </section>
+
+    <div class="notice" id="notice">
+      PC Mode uses <b>http://localhost:5000</b>. Online Mode needs a public backend URL, otherwise prices/confidence cannot load.
+    </div>
+
+    <section class="stats">
+      <div><span>Balance</span><b id="balance">--</b></div>
+      <div><span>Equity</span><b id="equity">--</b></div>
+      <div><span>Free Margin</span><b id="freeMargin">--</b></div>
+      <div><span>Server</span><b id="server">--</b></div>
+    </section>
+
+    <section class="grid" id="pairGrid"></section>
+
+    <section class="bottom">
+      <div class="panel">
+        <h2 style="margin-top:0;color:#00e5ff;font-size:15px">Bridge Test Panel</h2>
+        <div class="list">
+          <div><span>Status endpoint</span><b id="statusTest">--</b></div>
+          <div><span>Prices endpoint</span><b id="pricesTest">--</b></div>
+          <div><span>Setup endpoint</span><b id="setupTest">--</b></div>
+          <div><span>Last error</span><b id="lastError">--</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0;color:#f5c842;font-size:15px">Spread Logic</h2>
+        <div class="list">
+          <div><span>Normal</span><b>90</b></div>
+          <div><span>Strong Trend</span><b>140</b></div>
+          <div><span>Elite Momentum</span><b>220</b></div>
+          <div><span>Max Hard Cap</span><b>250</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0;color:#00e676;font-size:15px">Hard Safety</h2>
+        <div class="list">
+          <div><span>RR below 1:3</span><b>BLOCK</b></div>
+          <div><span>No live tick</span><b>BLOCK</b></div>
+          <div><span>Invalid SL/TP</span><b>BLOCK</b></div>
+          <div><span>Spread > 250</span><b>BLOCK</b></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>Use this file for online portal or PC browser. It does not contain heavy original UI scripts.</footer>
+  </main>
+
+<script>
+const SYMBOLS = ["XAUUSD","XAGUSD","XPDUSD","EURUSD","GBPUSD","USDJPY","USDCHF","USDCAD","AUDUSD"];
+let auto = true;
+let mode = "ONLINE";
+let apiBase = localStorage.getItem("snipex_api_base") || "";
+
+const grid = document.getElementById("pairGrid");
+const apiInput = document.getElementById("apiBase");
+apiInput.value = apiBase;
+
+function setPcMode(){
+  mode = "PC"; apiBase = "http://localhost:5000";
+  localStorage.setItem("snipex_mode", mode); localStorage.setItem("snipex_api_base", apiBase);
+  apiInput.value = apiBase; refreshAll();
+}
+function setOnlineMode(){
+  mode = "ONLINE";
+  apiBase = apiInput.value.trim() || "";
+  localStorage.setItem("snipex_mode", mode); localStorage.setItem("snipex_api_base", apiBase);
+  refreshAll();
+}
+function toggleAuto(){ auto = !auto; document.getElementById("autoBtn").textContent = auto ? "Auto ON" : "Auto OFF"; document.getElementById("autoBtn").classList.toggle("on", auto); }
+function url(path){ return (apiBase || "").replace(/\/$/,"") + path; }
+function fmt(v,d=3){ const n=Number(v); return Number.isFinite(n)?n.toLocaleString(undefined,{maximumFractionDigits:d}):"--"; }
+function spread(p){ const a=Number(p?.ask), b=Number(p?.bid); if(!Number.isFinite(a)||!Number.isFinite(b)) return null; return Math.round((a-b)/0.001); }
+async function get(path){
+  const r = await fetch(url(path), {headers:{"Content-Type":"application/json"}});
+  const t = await r.text(); let j={};
+  try{ j=t?JSON.parse(t):{} }catch(e){ j={ok:false,error:t||"Invalid JSON"} }
+  if(!r.ok) throw new Error(j.error || j.message || ("HTTP "+r.status));
+  return j;
+}
+function card(sym){
+  return `<article class="card" id="card-${sym}">
+    <div class="head"><div><h2>${sym}</h2><p id="${sym}-strategy">Scanning</p></div><em id="${sym}-ready" class="tag warn">WAIT</em></div>
+    <div class="prices">
+      <div><span>Bid</span><b id="${sym}-bid">--</b></div>
+      <div><span>Ask</span><b id="${sym}-ask">--</b></div>
+      <div><span>Spread</span><b id="${sym}-spread">--</b></div>
+    </div>
+    <div class="confidence">
+      <div><span>Confidence</span><b id="${sym}-conf">--</b></div>
+      <i><u id="${sym}-bar" style="width:0%"></u></i>
+    </div>
+    <div class="decision"><span>Direction</span><b id="${sym}-dir">WAIT</b></div>
+    <small class="smallerr" id="${sym}-err" style="display:none"></small>
+  </article>`;
+}
+function initCards(){ grid.innerHTML = SYMBOLS.map(card).join(""); }
+function setText(id,v){ const e=document.getElementById(id); if(e) e.textContent = v; }
+function setClass(id, cls){ const e=document.getElementById(id); if(e) e.className = cls; }
+function updatePair(sym, p, s){
+  setText(sym+"-bid", fmt(p?.bid)); setText(sym+"-ask", fmt(p?.ask));
+  const sp = spread(p); const spEl=document.getElementById(sym+"-spread");
+  if(spEl){ spEl.textContent = sp ?? "--"; spEl.className = sp>250?"bad":sp>140?"warn":"good"; }
+  const conf = Number(s?.confidence ?? s?.master_confidence ?? s?.setup?.confidence ?? s?.data?.confidence ?? s?.result?.confidence ?? 0);
+  setText(sym+"-conf", conf?conf.toFixed(1)+"%":"--");
+  const bar=document.getElementById(sym+"-bar"); if(bar) bar.style.width = Math.max(0,Math.min(100,conf))+"%";
+  const dir = String(s?.direction ?? s?.side ?? s?.setup?.direction ?? s?.data?.direction ?? s?.result?.direction ?? "WAIT").toUpperCase();
+  const dirEl=document.getElementById(sym+"-dir"); if(dirEl){ dirEl.textContent=dir; dirEl.className = dir==="BUY"?"good":dir==="SELL"?"bad":"warn"; }
+  setText(sym+"-strategy", s?.strategy_name || s?.strategy || s?.setup?.strategy_name || s?.data?.strategy || "Scanning");
+  const ready = Boolean(s?.ready ?? s?.setup?.ready ?? s?.data?.ready ?? s?.result?.ready);
+  const re=document.getElementById(sym+"-ready"); if(re){ re.textContent=ready?"READY":"WAIT"; re.className="tag "+(ready?"good":"warn"); }
+  const er=document.getElementById(sym+"-err"); if(er){ if(s && s.ok===false && s.error){ er.style.display="block"; er.textContent=s.error; } else er.style.display="none"; }
+}
+async function refreshAll(){
+  document.getElementById("mode-pill").textContent = "MODE: "+mode;
+  document.getElementById("notice").innerHTML = mode==="PC" ? 'PC Mode: using <b>http://localhost:5000</b>. Keep python main.py running.' : 'Online Mode: using <b>'+apiBase+'</b>. Backend must be public and CORS enabled.';
+  let status={}, prices={};
+  try{
+    status = await get("/api/status"); setText("statusTest","OK");
+    const connected = !!(status.ok && (status.connected || status.mt5_connected || status.bridge_ok));
+    const pill=document.getElementById("mt5-pill"); pill.textContent=connected?"MT5 LIVE":"MT5 OFF"; pill.className="pill "+(connected?"good":"bad");
+    const acc=status.account||{}; setText("balance",(acc.currency||"INR")+" "+fmt(acc.balance,2)); setText("equity",(acc.currency||"INR")+" "+fmt(acc.equity,2)); setText("freeMargin",(acc.currency||"INR")+" "+fmt(acc.margin_free,2)); setText("server",status.server||acc.server||"--");
+  }catch(e){ setText("statusTest","FAIL"); setText("lastError",e.message); }
+  try{
+    const pr = await get("/api/prices?symbols="+SYMBOLS.join(",")); prices=pr.data||{}; setText("pricesTest","OK");
+  }catch(e){ setText("pricesTest","FAIL"); setText("lastError",e.message); }
+  let setupOk=0;
+  await Promise.all(SYMBOLS.map(async sym=>{
+    let s={};
+    try{ s=await get("/api/setup_status?symbol="+encodeURIComponent(sym)); setupOk++; }
+    catch(e){ s={ok:false,error:e.message}; }
+    updatePair(sym, prices[sym]||{}, s);
+  }));
+  setText("setupTest",setupOk+"/"+SYMBOLS.length);
+  setText("updated-pill","Updated: "+new Date().toLocaleTimeString());
+}
+initCards(); refreshAll(); setInterval(()=>{ if(auto) refreshAll(); }, 5000);
+</script>
+</body>
 </html>
